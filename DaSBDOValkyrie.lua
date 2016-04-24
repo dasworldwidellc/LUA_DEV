@@ -189,6 +189,14 @@ function DaSBDOValkyrie:Attack(monsterActor)
                     print("Righteous Charge")
                     selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MOVE_FORWARD | ACTION_FLAG_SPECIAL_ACTION_3, actorPosition)
 
+									-- -- TODO fix bug where it will not cast ult.Judemement of Light on several adds
+				-- if JUDGEMENT_OF_LIGHT ~= 0 and not selfPlayer:IsSkillOnCooldown(JUDGEMENT_OF_LIGHT) and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 500
+					-- and monsterCount >= 1 and selfPlayer.BlackRage == 100 and selfPlayer.ManaPercent > 40 then
+					-- print("Maximum Black Rage and too many adds! Let their be light!")
+					-- selfPlayer:UseSkillAtPosition(JUDGEMENT_OF_LIGHT, actorPosition, 3000)
+                    -- return
+                -- end
+					
                     -- CHARKING SLASH
                     if CHARGING_SLASH ~= 0 and (not selfPlayer:IsSkillOnCooldown(CHARGING_SLASH) or string.match(selfPlayer.CurrentActionName, "ChargingSlash"))
                         and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 200 and selfPlayer.ManaPercent > 20 then
@@ -292,14 +300,13 @@ function DaSBDOValkyrie:Attack(monsterActor)
             else
                 Navigator.Stop()
 
-				-- TODO fix bug where it will not cast ult.
-                -- Judgement of Light on several adds
-                -- if JUDGEMENT_OF_LIGHT ~= 0 and not selfPlayer:IsSkillOnCooldown(JUDGEMENT_OF_LIGHT) and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 500
-                -- and monsterCount >= 3 and selfPlayer.BlackRage == 100 and selfPlayer.ManaPercent > 40 then
-                -- print("Maximum Black Rage and too many adds! Let their be light!")
-                -- selfPlayer:DoActionAtPosition(JUDGEMENT_OF_LIGHT, actorPosition, 3000)
-                -- return
-                -- end
+				-- TODO fix bug where it will not cast ult.Judemement of Light on several adds
+				if JUDGEMENT_OF_LIGHT ~= 0 and not selfPlayer:IsSkillOnCooldown(JUDGEMENT_OF_LIGHT) and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 500
+					and monsterCount >= 1 and selfPlayer.BlackRage == 100 and selfPlayer.ManaPercent > 40 then
+					print("Maximum Black Rage and too many adds! Let their be light!")
+					selfPlayer:UseSkillAtPosition(JUDGEMENT_OF_LIGHT, actorPosition, 3000)
+                    return
+                end
 
 
                 -- SEVERING_LIGHT on several adds
@@ -310,8 +317,6 @@ function DaSBDOValkyrie:Attack(monsterActor)
                     selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK | ACTION_FLAG_SECONDARY_ATTACK, actorPosition, 1000)
                     return
                 end
-
-
 
                 -- Celestial Spear Check
                 if CELESTIAL_SPEAR ~= 0 and not selfPlayer:IsSkillOnCooldown(CELESTIAL_SPEAR) and selfPlayer.ManaPercent > 20 then
