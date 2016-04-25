@@ -302,7 +302,7 @@ function DaSBDOValkyrie:Attack(monsterActor)
 
 				-- TODO fix bug where it will not cast ult.Judemement of Light on several adds
 				if JUDGEMENT_OF_LIGHT ~= 0 and not selfPlayer:IsSkillOnCooldown(JUDGEMENT_OF_LIGHT) and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 500
-					and monsterCount >= 1 and selfPlayer.BlackRage == 100 and selfPlayer.ManaPercent > 40 then
+					and monsterCount >= 3 and selfPlayer.BlackRage == 100 and selfPlayer.ManaPercent > 40 then
 					print("Maximum Black Rage and too many adds! Let their be light!")
 					selfPlayer:UseSkillAtPosition(JUDGEMENT_OF_LIGHT, actorPosition, 3000)
                     return
