@@ -1,6 +1,6 @@
 DaSBDOValkyrie = { }
 DaSBDOValkyrie.__index = DaSBDOValkyrie
-DaSBDOValkyrie.Version = "2.0.0 Shield Maiden"
+DaSBDOValkyrie.Version = "2.0.1 Shield Maiden"
 DaSBDOValkyrie.Author = "DaS"
 
 ------------------- Spell ID's --------------------------
@@ -482,16 +482,16 @@ function DaSBDOValkyrie:Attack(monsterActor)
                 end
 
 				-- SEVERING_LIGHT on several adds
-                if SEVERING_LIGHT ~= 0 and (not selfPlayer:IsSkillOnCooldown(SEVERING_LIGHT) or string.match(selfPlayer.CurrentActionName, "LightCut4"))
-                    and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 200 and selfPlayer.HealthPercent <= 75 and selfPlayer.ManaPercent > 20 and monsterCount >= 1 then
-                    print("Low Health gaining health back with severing light")
-                    selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK + ACTION_FLAG_SECONDARY_ATTACK, actorPosition, 3000)
-						if GetSelfPlayer():CheckCurrentAction("BT_skill_Lightcut_S") == false and Playerswitch == true
+				if SEVERING_LIGHT ~= 0 and (not selfPlayer:IsSkillOnCooldown(SEVERING_LIGHT) or string.match(selfPlayer.CurrentActionName, "LightCut4"))
+					and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 200 and selfPlayer.HealthPercent <= 75 and selfPlayer.ManaPercent > 20 and monsterCount >= 1 then
+					print("Low Health gaining health back with severing light")
+					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK + ACTION_FLAG_SECONDARY_ATTACK, actorPosition, 3000)
+						if GetSelfPlayer():CheckCurrentAction("BT_skill_Lightcut_S") == false
 						then
 						print("sev light ult")
 						GetSelfPlayer():DoActionAtPosition("BT_skill_Lightcut_S",GetSelfPlayer().CrosshairPosition, 100)
-                    return
-					end
+						end
+					return
 				end
 
                 -- Sword of Judgement
@@ -570,7 +570,6 @@ function DaSBDOValkyrie:Roaming()
 
 	-- Low on mana use vow of trust
     if VOW_OF_TRUST ~= 0 and not selfPlayer:IsSkillOnCooldown(VOW_OF_TRUST) and selfPlayer.ManaPercent <= 10 then
-
 		if GetSelfPlayer():CheckCurrentAction("BT_ACTION_CHANGE") == false
 		then Navigator.Stop()
 		GetSelfPlayer():DoActionAtPosition("BT_ACTION_CHANGE",GetSelfPlayer().CrosshairPosition, 1)
@@ -592,3 +591,4 @@ function DaSBDOValkyrie:Roaming()
 end
 
 return DaSBDOValkyrie()
+
