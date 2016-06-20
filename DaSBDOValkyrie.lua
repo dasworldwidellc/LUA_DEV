@@ -28,7 +28,7 @@ end
 DaSBDOValkyrie = { }
 DaSBDOValkyrie.__index = DaSBDOValkyrie
 DaSBDOValkyrie.Author = "DaS"
-DaSBDOValkyrie.Version = "3.1.0 Shield Maiden Edition"
+DaSBDOValkyrie.Version = "3.2.0 Shield Maiden Edition"
 DaSBDOValkyrie.BadAssBugTester = "Lucifer^PDX"
 DaSBDOValkyrie.CreditsLibs = "Edan"
 DaSBDOValkyrie.CreditsTimer = "VisionZ"
@@ -132,8 +132,6 @@ end
 
 ----------------------------------------------------------------------
 
-
-
 heavensTimerInitial = false
 heavensTimer = PyxTimer:New(5)  --creates a timer counting to 60 sec
 
@@ -198,14 +196,6 @@ function DaSBDOValkyrie:Combos()
         return
     end
 
-    --skill spam vow of trust to regen mana
-    if self.player.ManaPercent <= 30 then
-        if EdanSkills.SkillUsableCooldown(VALKYRIE_VOW_OF_TRUST) then
-        EdanCombo.DoActionAtPosition("BT_skill_FightingSpirit_Ing2", self.monster.Position, 1)
-        print("vow of trust regen mana")
-        end
-        return
-    end
 
     if EdanSkills.SkillUsableCooldown(VALKYRIE_HEAVENS_ECHO) and not self.player:HasBuffById(27390) and self.player.ManaPercent >= 10 then
         print("Buffing! Heaven's Echo!")
@@ -232,39 +222,6 @@ function DaSBDOValkyrie:Combos()
             self.combos = nil
     end
 
--- dodge basic attacks
-if string.match(self.monster.CurrentActionName, "BATTLE_ATTACK") and EdanScout.MonstersInMeleeRange > 0 then
-
-    if EdanScout.InFront(self.player.Position,self.player.Rotation + math.pi / 2,120, self.monster.Position) then
-        --EdanCombo.DoAction("BT_ROLL_L",500)
-        EdanCombo.DoAction("BT_Def_Dash_L_Ing_1",100)
-        print("dash to the left")
-
-
-    elseif EdanScout.InFront(self.player.Position,self.player.Rotation - math.pi / 2,120, self.monster.Position) then
-        --EdanCombo.DoAction("BT_ROLL_P",500)
-        EdanCombo.DoAction("BT_Def_Dash_R_Ing_2",100)
-        print("dash to the right")
-
-    elseif EdanScout.InFrontOfMe(self.monster.Position) ~= true then
-                if math.random(1, 2) == 1 then
-                EdanCombo.DoAction("BT_ROLL_L",100)
-                print("roll to the left")
-            else
-                EdanCombo.DoAction("BT_ROLL_P",100)
-                print("roll to the right")
-                end
-    elseif math.random(1, 2) == 1 then
-        --EdanCombo.DoAction("BT_ROLL_L",500)BT_Skill_Defense_Ing
-        EdanCombo.DoAction("BT_ROLL_L",100)
-        print("roll to the left")
-    else
-        --EdanCombo.DoAction("BT_ROLL_P",500)
-        EdanCombo.DoAction("BT_ROLL_P",100)
-        print("roll to the right")
-    end
-end
-
     if  EdanScout.MonstersInMeleeRange > 0 then        
         Playerswitch = true
         local characters = GetActors();
@@ -276,9 +233,9 @@ end
             end
         end
   
-         if EdanScout.MonstersInMeleeRange > 0 then
+        if EdanScout.MonstersInMeleeRange > -10 and self.player.ManaPercent > 20 then
             repeat
-                if EdanSkills.SkillUsableCooldown(VALKYRIE_CELESTIAL_SPEAR) and EdanScout.MonstersInMeleeRange > 0 then
+                if EdanSkills.SkillUsableCooldown(VALKYRIE_CELESTIAL_SPEAR) and EdanScout.MonstersInMeleeRange > 0 and self.player.ManaPercent > 20 then
                 print("Celestrial Spear Melee Range")
                 EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_BACKWARD|ACTION_FLAG_SPECIAL_ACTION_2, self.monster.Position)
                     if EdanSkills.SkillUsableCooldown(VALKYRIE_SWORD_OF_JUDGMENT) then
@@ -289,13 +246,13 @@ end
                 end
 
                 -- SEVERING_LIGHT on several adds 
-                if EdanSkills.SkillUsableCooldown(VALKYRIE_SEVERING_LIGHT) and self.player.HealthPercent < 70 and EdanScout.MonstersInMeleeRange > 0 then
+                if EdanSkills.SkillUsableCooldown(VALKYRIE_SEVERING_LIGHT) and self.player.HealthPercent < 70 and EdanScout.MonstersInMeleeRange > 0 and self.player.ManaPercent > 20 then
                 print("Low Health gaining health back with severing light")
                 EdanCombo.SetActionState(ACTION_FLAG_MAIN_ATTACK + ACTION_FLAG_SECONDARY_ATTACK, 2000)
                     return
                 end
 
-                if EdanSkills.SkillUsableCooldown(VALKYRIE_SHARP_LIGHT) and EdanScout.MonstersInMeleeRange > 0 then
+                if EdanSkills.SkillUsableCooldown(VALKYRIE_SHARP_LIGHT) and EdanScout.MonstersInMeleeRange > 0 and self.player.ManaPercent > 20 then
                 print("Sharp Light")
                 EdanCombo.SetActionStateAtPosition(ACTION_FLAG_EVASION | ACTION_FLAG_MAIN_ATTACK, self.monster.Position)
                     if EdanSkills.SkillUsableCooldown(VALKYRIE_SWORD_OF_JUDGMENT) then
@@ -305,16 +262,28 @@ end
                     return 
                 end
 
-                if EdanSkills.SkillUsableCooldown(VALKYRIE_SWORD_OF_JUDGMENT) then
-                print("Sword of Judgment")
-                EdanCombo.SetActionState(ACTION_FLAG_MOVE_BACKWARD|ACTION_FLAG_SECONDARY_ATTACK, 1000)
-                return
+                if EdanSkills.SkillUsableCooldown(VALKYRIE_SWORD_OF_JUDGMENT) and self.player.ManaPercent > 20 then
+                    print("Sword of Judgment")
+                    EdanCombo.SetActionState(ACTION_FLAG_MOVE_BACKWARD|ACTION_FLAG_SECONDARY_ATTACK, 1000)
+                    return
+                end
+
+                if EdanSkills.SkillUsableCooldown(VALKYRIE_FORWARD_SLASH) and self.player.ManaPercent < 20 then
+                    print("Mana Low! Using Forward Slash to regain!")
+                    EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_FORWARD + ACTION_FLAG_MAIN_ATTACK, self.monster.Position)
+                    return
                 end
 
             print("Throwing Shield Melee Range!")
             EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_BACKWARD + ACTION_FLAG_SPECIAL_ACTION_1, self.monster.Position)
             until monster ~= 1  return
-        end     
+        end 
+
+        if EdanSkills.SkillUsableCooldown(VALKYRIE_FORWARD_SLASH) and self.player.ManaPercent < 20 then
+            print("Mana Low! Using Forward Slash to regain!")
+            EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_FORWARD + ACTION_FLAG_MAIN_ATTACK, self.monster.Position)
+            return
+        end    
     end
 
     if  EdanScout.MonstersInMidRange > 0 then        
@@ -328,9 +297,9 @@ end
             end
         end
     
-        if distance > 250 and distance < 600 then
+        if distance > 250 and distance < 600 and self.player.ManaPercent > 20 then
             repeat
-            if EdanSkills.SkillUsableCooldown(VALKYRIE_CELESTIAL_SPEAR) and EdanScout.MonstersInMidRange > 0 then
+            if EdanSkills.SkillUsableCooldown(VALKYRIE_CELESTIAL_SPEAR) and EdanScout.MonstersInMidRange > 0 and self.player.ManaPercent > 20 then
             print("Celestrial Spear Mid Range")
             EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_BACKWARD|ACTION_FLAG_SPECIAL_ACTION_2, self.monster.Position)
             return 
@@ -338,6 +307,17 @@ end
             print("Throwing Shield Mid Range!")
             EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_BACKWARD + ACTION_FLAG_SPECIAL_ACTION_1, self.monster.Position)
             until monster ~= 1 return
+        end
+        
+        if EdanSkills.SkillUsableCooldown(VALKYRIE_FORWARD_SLASH) and self.player.ManaPercent < 20 then
+            print("Righteous Charge")
+            if EdanSkills.SkillUsableCooldown(VALKYRIE_FORWARD_SLASH) then 
+               EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_FORWARD + ACTION_FLAG_SPECIAL_ACTION_3, self.monster.Position)
+               return
+            end
+            print("Mana Low! Using Forward Slash to regain!")
+            EdanCombo.SetActionStateAtPosition(ACTION_FLAG_MOVE_FORWARD + ACTION_FLAG_MAIN_ATTACK, self.monster.Position)
+            return
         end        
     end
 end
